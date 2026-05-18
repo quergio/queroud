@@ -885,7 +885,6 @@ async function updateLeaderboard() {
 
     leaderboardEl.appendChild(div);
   });
-}
 
 function addClicks(amount) {
   score += amount;
@@ -954,7 +953,10 @@ setInterval(() => {
 }, 100);
 
 createUpgrades();
+
 updateUI();
+
+updateLeaderboard();
 
 </script>
 
