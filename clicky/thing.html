@@ -1,6 +1,4 @@
-# chaos-clicker.html
 
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -527,6 +525,50 @@
 
   </div>
 </div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+ setDoc,
+  getDocs,
+  getDoc,
+  collection
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBivV6Stj3RcTU2pZUBt6c-5WHSdujw7FE",
+
+  authDomain: "queroad-b9a31.firebaseapp.com",
+
+  projectId: "queroad-b9a31",
+
+  storageBucket: "queroad-b9a31.appspot.com",
+
+  messagingSenderId: "1016489850255",
+
+  appId: "1:1016489850255:web:72933dbb9c8afb466947fa"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+window.db = db;
+window.setDoc = setDoc;
+window.doc = doc;
+window.getDocs = getDocs;
+window.collection = collection;
+window.getDoc = getDoc;
+
+</script>
 
 <script>
 
