@@ -575,6 +575,12 @@ window.getDoc = getDoc;
 let score = Number(localStorage.getItem("score")) || 0;
 let cps = 0;
 let username = localStorage.getItem("username") || "guest";
+const db = window.db;
+const setDoc = window.setDoc;
+const doc = window.doc;
+const getDocs = window.getDocs;
+const collection = window.collection;
+const getDoc = window.getDoc;
 
 const scoreEl = document.getElementById("score");
 const cpsEl = document.getElementById("cps");
