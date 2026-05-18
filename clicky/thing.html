@@ -737,7 +737,7 @@ function createUpgrades() {
   });
 }
 
-function saveNickname() {
+async function saveNickname() {
 
   // already locked username
   if(localStorage.getItem("usernameLocked")) {
@@ -767,6 +767,14 @@ function saveNickname() {
     return;
   }
 
+  const existingUser = await getDoc(
+  doc(db, "leaderboard", chosen)
+);
+
+if(existingUser.exists()) {
+  alert("username already taken");
+  return;
+}
   // save username
   username = chosen;
 
@@ -798,20 +806,58 @@ function saveNickname() {
   updateLeaderboard();
 }
 
-function updateLeaderboard() {
+async function updateLeaderboard() {
 
-  let board = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  if(username === "guest") return;
 
-  const existing = board.find(x => x.name === username);
-
-  if(existing) {
-    existing.score = score;
-  } else {
-    board.push({
+  // SAVE PLAYER TO FIREBASE
+  await setDoc(
+    doc(db, "leaderboard", username),
+    {
       name: username,
-      score: score
-    });
-  }
+      score: Math.floor(score)
+    }
+  );
+
+  // GET EVERY PLAYER
+  const snapshot = await getDocs(
+    collection(db, "leaderboard")
+  );
+
+  let board = [];
+
+  snapshot.forEach(docSnap => {
+    board.push(docSnap.data());
+  });
+
+  // SORT
+  board.sort((a, b) => b.score - a.score);
+
+  // TOP 10
+  board = board.slice(0, 10);
+
+  // RENDER
+  leaderboardEl.innerHTML = "";
+
+  board.forEach((player, i) => {
+
+    const div = document.createElement("div");
+
+    div.className = "leader";
+
+    div.innerHTML = `
+      <div>
+        #${i + 1} • ${player.name}
+      </div>
+
+      <div>
+        ${format(player.score)}
+      </div>
+    `;
+
+    leaderboardEl.appendChild(div);
+  });
+}
 
   board.sort((a,b) => b.score - a.score);
 
