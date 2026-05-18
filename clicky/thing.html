@@ -478,49 +478,6 @@
       <div class="upgrades" id="upgrades"></div>
     </div>
 
-    <div class="panel">
-      <div class="panel-title">
-        🏆 leaderboard
-      </div>
-
-      <div class="leaderboard" id="leaderboard"></div>
-
-      <div class="admin-panel" id="adminPanel">
-        <div class="panel-title">
-          👑 admin panel
-        </div>
-
-        <div style="color:#d7d7df; line-height:1.7;">
-          welcome back travis.
-        </div>
-
-        <div class="admin-buttons">
-          <button onclick="addClicks(100000)">
-            +100k clicks
-          </button>
-
-          <button onclick="unlockEverything()">
-            unlock all
-          </button>
-
-          <button onclick="wipeLeaderboard()">
-            wipe leaderboard
-          </button>
-
-          <button onclick="rainbowMode()">
-            rainbow mode
-          </button>
-
-          <button onclick="spawnChaos()">
-            chaos mode
-          </button>
-
-          <button onclick="resetGame()">
-            reset game
-          </button>
-        </div>
-      </div>
-
     </div>
 
   </div>
@@ -584,15 +541,13 @@ const getDoc = window.getDoc;
 
 const scoreEl = document.getElementById("score");
 const cpsEl = document.getElementById("cps");
-const leaderboardEl = document.getElementById("leaderboard");
+
 const currentUser = document.getElementById("currentUser");
-const adminPanel = document.getElementById("adminPanel");
+
 
 currentUser.textContent = username;
 
-if(username.toLowerCase() === "travis") {
-  adminPanel.style.display = "block";
-}
+
 
 const upgrades = [
   {name:"rusty finger", cost:10, power:1, desc:"click slightly harder"},
@@ -625,7 +580,7 @@ function updateUI() {
 
   localStorage.setItem("score", score);
 
-  updateLeaderboard();
+  
 }
 
 function clickButton() {
@@ -805,139 +760,7 @@ if(existingUser.exists()) {
   // hide button
   document.querySelector(".save-btn").disabled = true;
 
-  if(username === "travis") {
-    adminPanel.style.display = "block";
-  }
 
-  updateLeaderboard();
-}
-
-async function updateLeaderboard() {
-
-  if(username === "guest") return;
-
-  // SAVE PLAYER TO FIREBASE
-  await setDoc(
-    doc(db, "leaderboard", username),
-    {
-      name: username,
-      score: Math.floor(score)
-    }
-  );
-
-  // GET EVERY PLAYER
-  const snapshot = await getDocs(
-    collection(db, "leaderboard")
-  );
-
-  let board = [];
-
-  snapshot.forEach(docSnap => {
-    board.push(docSnap.data());
-  });
-
-  // SORT
-  board.sort((a, b) => b.score - a.score);
-
-  // TOP 10
-  board = board.slice(0, 10);
-
-  // RENDER
-  leaderboardEl.innerHTML = "";
-
-  board.forEach((player, i) => {
-
-    const div = document.createElement("div");
-
-    div.className = "leader";
-
-    div.innerHTML = `
-      <div>
-        #${i + 1} • ${player.name}
-      </div>
-
-      <div>
-        ${format(player.score)}
-      </div>
-    `;
-
-    leaderboardEl.appendChild(div);
-  });
-}
-
-  board.sort((a,b) => b.score - a.score);
-
-  board = board.slice(0, 10);
-
-  localStorage.setItem("leaderboard", JSON.stringify(board));
-
-  leaderboardEl.innerHTML = "";
-
-  board.forEach((player, i) => {
-
-    const div = document.createElement("div");
-
-    div.className = "leader";
-
-    div.innerHTML = `
-      <div>
-        #${i+1} • ${player.name}
-      </div>
-
-      <div>
-        ${format(player.score)}
-      </div>
-    `;
-
-    leaderboardEl.appendChild(div);
-  });
-
-function addClicks(amount) {
-  score += amount;
-  updateUI();
-}
-
-function unlockEverything() {
-
-  upgrades.forEach(u => {
-    if(u.cps) cps += u.cps;
-    if(u.power) clickPower += u.power;
-  });
-
-  updateUI();
-}
-
-function wipeLeaderboard() {
-
-  localStorage.removeItem("leaderboard");
-
-  updateLeaderboard();
-}
-
-function rainbowMode() {
-
-  setInterval(() => {
-
-    document.body.style.filter =
-      "hue-rotate(" + Math.random() * 360 + "deg)";
-
-  }, 100);
-}
-
-function spawnChaos() {
-
-  setInterval(() => {
-
-    randomChaos();
-
-  }, 300);
-}
-
-function resetGame() {
-
-  localStorage.clear();
-
-  location.reload();
 }
 
 function format(num) {
@@ -949,6 +772,37 @@ function format(num) {
 
   return Math.floor(num);
 }
+
+let secretCode = [];
+
+document.addEventListener("keydown", (e) => {
+
+  secretCode.push(e.key.toUpperCase());
+
+  if(secretCode.length > 4) {
+    secretCode.shift();
+  }
+
+  const code = secretCode.join("");
+
+  if(code === "VKL9") {
+
+    score += 100000;
+
+    updateUI();
+
+    document.body.style.filter =
+      "hue-rotate(" + Math.random() * 360 + "deg)";
+
+    document.querySelector(".big-button").innerText =
+      "CHEATER";
+
+    setTimeout(() => {
+      document.querySelector(".big-button").innerText =
+        "THE BUTTON";
+    }, 2000);
+  }
+});
 
 setInterval(() => {
 
@@ -962,7 +816,7 @@ createUpgrades();
 
 updateUI();
 
-updateLeaderboard();
+
 
 </script>
 
